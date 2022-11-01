@@ -1,0 +1,50 @@
+#!/bin/bash
+
+backup_parent_dir="/data/backups/mysql"
+backup_date=`date +%Y-%m-%d`
+backup_dir="${backup_parent_dir}/${backup_date}"
+echo "Backup directory: ${backup_dir}"
+mkdir -p "${backup_dir}"
+chmod 755 "${backup_dir}"
+HOSTNAME=`hostname`
+
+# set DAYS
+if [ -n "$1" ]; then
+  DAYS=$1
+else
+  DAYS={{ item.retention | default("14") }}
+fi
+
+logger "*** Start MySQL Backup ***"
+
+mysql_version=`echo "SHOW GLOBAL VARIABLES LIKE 'innodb_version'" | mysql -B | grep innodb_version | awk '{print $2}'`
+mysql_databases=`echo 'show databases' | mysql -B | sed /^Database$/d`
+
+# Backup and compress each database
+for database in $mysql_databases
+do
+  if [ "${database}" == "information_schema" ] || [ "${database}" == "performance_schema" ] || [ "${database}" == "sys" ] ; then
+        echo "Skipping backup of \"${database}\" database"
+  else
+    if [ "${database}" == "mysql" ] ; then
+        additional_mysqldump_params="--events --ignore-table=mysql.event"
+        echo "Creating backup of \"${database}\" database"
+        bkp_date=`date '+%F_%H-%M'`
+        mysqldump ${additional_mysqldump_params} ${database} | pigz > "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+        chmod 600 "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+    else
+        additional_mysqldump_params="--max_allowed_packet=512M --single-transaction"
+        echo "Creating backup of \"${database}\" database"
+        bkp_date=`date '+%F_%H-%M'`
+        mysqldump ${additional_mysqldump_params} ${database} | pigz > "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+        chmod 600 "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+    fi
+  fi
+done
+
+logger "*** Delete MySQL backups older than ${DAYS} days ***"
+
+# Delete backups older than ${days}
+find ${backup_parent_dir} -name '*' -type d -mtime +${DAYS} -prune -exec rm -rfv "{}" \;
+
+logger "*** Finish MySQL Backup ***"

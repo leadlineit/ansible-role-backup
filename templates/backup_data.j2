@@ -1,0 +1,33 @@
+#!/bin/sh
+
+backup_parent_dir="/data/backups/etc"
+backup_date=`date +%Y-%m-%d_%H-%M`
+backup_dir="${backup_parent_dir}/`date "+%Y-%m-%d"`"
+echo "Backup directory: ${backup_dir}"
+mkdir -p "${backup_dir}"
+chmod 755 "${backup_dir}"
+HOSTNAME=`hostname`
+
+# set DAYS
+if [ -n "$1" ]; then
+  DAYS=$1
+else
+  DAYS={{ item.retention | default("14") }}
+fi
+
+logger "*** Start data Backup ***"
+
+/usr/bin/dpkg -l > /etc/packages.list
+
+tar -c --exclude-vcs --exclude-backups --exclude='*.sock' -I pigz -f "${backup_dir}/${HOSTNAME}_etc_${backup_date}.tgz" -C / etc 
+chmod 600 "${backup_dir}/${HOSTNAME}_etc_${backup_date}.tgz"
+
+tar -c --exclude-vcs --exclude-backups --exclude='*.sock' -I pigz -f "${backup_dir}/${HOSTNAME}_root_${backup_date}.tgz" -C / root
+chmod 600 "${backup_dir}/${HOSTNAME}_root_${backup_date}.tgz"
+
+logger "*** Delete backups older than ${DAYS} days ***"
+
+# Delete backups older than ${days}
+find ${backup_parent_dir} -name '*' -type d -mtime +${DAYS} -prune -exec rm -rfv "{}" \;
+
+logger "*** Finish data Backup ***"

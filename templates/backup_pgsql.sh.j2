@@ -1,0 +1,50 @@
+#!/bin/bash
+
+## Variables
+backup_parent_dir="/data/backups/postgresql"
+backup_date=`date +%Y-%m-%d_%H-%M`
+backup_dir="${backup_parent_dir}/`date "+%Y-%m-%d"`"
+echo "Backup directory: ${backup_dir}"
+mkdir -p "${backup_dir}"
+chmod 755 "${backup_dir}"
+HOSTNAME=`hostname`
+
+# set DAYS
+if [ -n "$1" ]; then
+  DAYS=$1
+else
+  DAYS={{ item.retention | default("14") }}
+fi
+
+##  Backup and compress each PostgreSQL database process
+logger "*** Starting PostgreSQL bases backup ***"
+
+psql_version=`echo 'SELECT version();' | psql -U postgres | grep PostgreSQL | awk '{print $2}'`
+psql_databases=`echo 'SELECT datname FROM pg_database;' | psql -U postgres | sed -r 's/\s+//g;' | sed '/datname/,2d; /(/,$d'`
+pgdump_params="-U postgres -Z0 -Fc"
+
+for database in $psql_databases
+do
+  if [[ "${database}" =~ template0 ]] || [[ "${database}" =~ template1 ]] ; then
+        echo "Skipping backup of \"${database}\" database"
+  else
+    if [[ "${database}" =~ postgres ]] ; then
+        echo "Creating backup of \"${database}\" database"
+        bkp_date=`date '+%F_%H-%M'`
+        pg_dump ${pgdump_params} ${database} | pigz > "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+        chmod 600 "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+    else
+        echo "Creating backup of \"${database}\" database"
+        bkp_date=`date '+%F_%H-%M'`
+        pg_dump ${pgdump_params} ${database} | pigz > "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+        chmod 600 "${backup_dir}/${HOSTNAME}_${database}_${bkp_date}.tgz"
+    fi
+  fi
+done
+
+logger "*** Delete PostgreSQL backups older than ${DAYS} days ***"
+
+# Delete backups older than ${days}
+find ${backup_parent_dir} -name '*' -type d -mtime +${DAYS} -prune -exec rm -rfv "{}" \;
+
+logger "*** Finished PostgreSQL bases backup ***"

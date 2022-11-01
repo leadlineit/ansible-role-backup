@@ -1,0 +1,14 @@
+---
+backup:
+  - name: etc
+    script: backup_etc.sh
+  - name: mysql
+    script: backup_mysql.sh
+    retention: 14
+  - name: pgsql
+    script: backup_pgsql.sh
+    retention: 14
+  - name: sites
+    script: backup_sites.sh
+  - name: homes
+    script: backup_homes.sh

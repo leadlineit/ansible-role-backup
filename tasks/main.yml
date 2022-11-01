@@ -1,0 +1,10 @@
+---
+- name: Copy backup script(s) to remote host
+  ansible.builtin.template:
+    src: "{{ item.script }}.j2"
+    dest: "/usr/local/bin/{{ item.script }}"
+    mode: '0700'
+    owner: root
+    group: root
+  with_items:
+    - "{{ backup }}"

@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  role_name: backup
+  namespace: leadlineit
+  author: Stas Stavnichuk
+  description: Backup scripts for locale backups
+  license: BSD
+  min_ansible_version: '1.4'
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - buster
+        - stretch
+  galaxy_tags:
+    - system
+    - debian
+    - centos
+    - backup
