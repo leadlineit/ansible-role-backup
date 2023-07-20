@@ -5,10 +5,11 @@ galaxy_info:
   author: Stas Stavnichuk
   description: Backup scripts for locale backups
   license: BSD
-  min_ansible_version: '1.4'
+  min_ansible_version: '2.8'
   platforms:
     - name: Debian
       versions:
+        - bookworm
         - bullseye
         - buster
         - stretch

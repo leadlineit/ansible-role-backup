@@ -1,14 +1,21 @@
-# Ansible Role Backup
+# Ansible Galaxy role to create backup scripts for locale backups.
 
 ![Build Status](https://github.com/leadlineit/ansible-role-backup/actions/workflows/ansible-galaxy-ci.yml/badge.svg)
 [![Galaxy Role](https://img.shields.io/badge/Ansible--Galaxy-leadlineit.backup-blue.svg?logo=ansible&logoColor=white)](https://galaxy.ansible.com/leadlineit/backup/)
 
-This role helps to create backup scripts for locale backups on a Debian (stretch/buster/bullseye).
+This role helps to create backup scripts for locale backups.
+
+Supported OSes
+--------------
+- Debian 12 (bookworm)
+- Debian 11 (bullseye)
+- Debian 10 (buster)
+- Debian 9 (stretch)
 
 Requirements
 ------------
 
-This role requires Ansible 1.4 or higher.
+This role requires Ansible 2.8 or higher.
 
 Role Variables
 --------------
