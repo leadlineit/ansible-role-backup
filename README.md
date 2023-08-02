@@ -1,4 +1,4 @@
-# Ansible Galaxy role to create backup scripts for locale backups.
+# Ansible Galaxy role for create backup scripts for locale backups.
 
 ![Build Status](https://github.com/leadlineit/ansible-role-backup/actions/workflows/ansible-galaxy-ci.yml/badge.svg)
 [![Galaxy Role](https://img.shields.io/badge/Ansible--Galaxy-leadlineit.backup-blue.svg?logo=ansible&logoColor=white)](https://galaxy.ansible.com/leadlineit/backup/)
@@ -15,7 +15,7 @@ Supported OSes
 Requirements
 ------------
 
-This role requires Ansible 2.8 or higher.
+This role requires Ansible 2.11 or higher.
 
 Role Variables
 --------------
