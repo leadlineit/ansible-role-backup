@@ -6,4 +6,5 @@
     mode: '0700'
     owner: root
     group: root
-  with_items: "{{ backup }}"
+  with_items:
+    - "{{ backup }}"
