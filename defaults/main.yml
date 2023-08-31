@@ -2,9 +2,11 @@
 backup:
   - name: etc
     script: backup_etc.sh
+    backup_parent_dir: /data/bkp_test/
   - name: mysql
     script: backup_mysql.sh
     retention: 14
+    backup_parent_dir: /some_bkp_dir/bases/
   - name: pgsql
     script: backup_pgsql.sh
     retention: 14

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-backup_parent_dir="/data/backups/etc"
+backup_parent_dir={{ item.backup_parent_dir | default("/data/backups/etc") }}
 backup_date=`date +%Y-%m-%d_%H-%M`
 backup_dir="${backup_parent_dir}/`date "+%Y-%m-%d"`"
 echo "Backup directory: ${backup_dir}"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-backup_parent_dir="/data/backups/mysql"
+backup_parent_dir={{ item.backup_parent_dir | default("/data/backups/mysql") }}
 backup_date=`date +%Y-%m-%d`
 backup_dir="${backup_parent_dir}/${backup_date}"
 echo "Backup directory: ${backup_dir}"

@@ -25,9 +25,11 @@ Role Variables
 backup:
   - name: etc
     script: backup_etc.sh
+    backup_parent_dir: /data/bkp_test/
   - name: mysql
     script: backup_mysql.sh
     retention: 14
+    backup_parent_dir: /some_bkp_dir/bases/
   - name: pgsql
     script: backup_pgsql.sh
     retention: 14
@@ -35,16 +37,18 @@ backup:
     script: backup_sites.sh
   - name: homes
     script: backup_homes.sh
+
 ```
 
-A "retention" variable an optional.
-Default value for "retention" (in days):
+A "retention" and "backup_parent_dir" variables optional.
+Default value for "retention" (in days) and for "backup_parent_dir":
 
 ```yaml
 ---
 backup:
   - name: some-script
     retention: 14
+    backup_parent_dir: /data/backups/{{name-of-script}}
 ```
 Dependencies
 ------------
